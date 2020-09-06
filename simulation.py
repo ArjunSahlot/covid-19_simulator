@@ -88,7 +88,7 @@ class Circle:
 def create_circles(width, height):
     circles = []
     for x in range(POPULATION_SIZE-1):
-        circles.append(Circle(width, height, True)) # todo: Not working
+        circles.append(Circle(width, height, True if not percent_to_bool(SOCIAL_DIST) else False))
     circles.append(Circle(width, height, True, "infected"))
     return circles
 
