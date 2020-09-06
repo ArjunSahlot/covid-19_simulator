@@ -35,6 +35,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (0, 20, 255)
 GREY = (200, 200, 200)
+DARK_GREY = (120, 120, 120)
 DEAD_COL = BLACK
 SUSCEPTIBLE_COL = (150, 175, 201)
 INFECTED_COL = (177, 103, 47)
@@ -70,12 +71,12 @@ class Circle:
 
     def move(self):
         if self.moving:
-            self.x += self.speedx
-            self.y += self.speedy
+            self.x += self.speedx * SIMULATION_SPEED
+            self.y += self.speedy * SIMULATION_SPEED
         if self.type == "infected":
             self.time += 1
 
-        if self.time == FPS*14//SIMULATION_SPEED:
+        if self.time == FPS*14//(SIMULATION_SPEED + 0.0001):
             self.time = 0
             if percent_to_bool(DEATH_RATE):
                 self.type = "dead"
@@ -235,7 +236,12 @@ def draw_window(win, circles, simulating, infect_typing, social_typing, death_ty
     win.blit(txt, (WIDTH//2 + 50 + 125//2 - txt.get_width()//2, HEIGHT + SETTINGSHEIGHT - 130 + 20 + 50 + 5))
     win.blit(txt2, (WIDTH // 2 + 50 + 125 // 2 - txt2.get_width()// 2, HEIGHT + SETTINGSHEIGHT - 130 + 20 + 50 + 5 + txt.get_height() + 3))
 
-    return infect_box, death_box, social_box, pop_box, vert_box
+    sim_box = pygame.draw.rect(win, DARK_GREY, (15 + 262, HEIGHT + 15 + 25 - 10 - 10, 200, 20))
+    txt3 = INFO_FONT.render("Simulation Speed", 1, BLACK)
+    win.blit(txt3, (15 + 262 + 100 - txt3.get_width()//2, HEIGHT + 15 + 25 - 10 - 10 + 20 + 7))
+    pygame.draw.circle(win, WHITE, (round(277 + SIMULATION_SPEED/(3/201)), HEIGHT + 15 + 25 - 10), 10)
+
+    return infect_box, death_box, social_box, pop_box, vert_box, sim_box
 
 
 def parse_percent(text, code="n/a"):
@@ -299,7 +305,7 @@ def num_infected(circles):
 
 
 def main(win, width, height):
-    global SOCIAL_DIST, INFECTION_SPREAD_RATE, DEATH_RATE, POPULATION_SIZE
+    global SOCIAL_DIST, INFECTION_SPREAD_RATE, DEATH_RATE, POPULATION_SIZE, SIMULATION_SPEED
     circles = create_circles(width, height)
     clock = pygame.time.Clock()
     social_text = TextInput(initial_string=str(SOCIAL_DIST), max_string_length=6)
@@ -319,7 +325,7 @@ def main(win, width, height):
     win.fill(WHITE, (0, HEIGHT + SETTINGSHEIGHT, WIDTH, GRAPHHEIGHT))
     while run:
         clock.tick(FPS)
-        infect_box, death_box, social_box, pop_box, vert_box = draw_window(win, circles, simulating, infect_typing, social_typing, death_typing, pop_typing, simulating_time, creating_vertboundary)
+        infect_box, death_box, social_box, pop_box, vert_box, sim_box = draw_window(win, circles, simulating, infect_typing, social_typing, death_typing, pop_typing, simulating_time, creating_vertboundary)
         events = pygame.event.get()
         mouseX, mouseY = pygame.mouse.get_pos()
         if creating_vertboundary and mouseY < height:
@@ -359,6 +365,10 @@ def main(win, width, height):
 
                 if vert_box.collidepoint(event.pos):
                     creating_vertboundary = True if creating_vertboundary == False else False
+
+        if pygame.mouse.get_pressed()[0]:
+            if sim_box.collidepoint((mouseX, mouseY)):
+                SIMULATION_SPEED = (mouseX-277)/(200/3)
 
         if simulating:
             for circle in circles:
