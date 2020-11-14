@@ -13,7 +13,7 @@ GRAPHHEIGHT = 100
 WIDTH, HEIGHT = 800, 600
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (1920//2 - WIDTH//2, 1080//2 - (HEIGHT + SETTINGSHEIGHT + GRAPHHEIGHT)//2)
 WINDOW = pygame.display.set_mode((WIDTH, HEIGHT + SETTINGSHEIGHT + GRAPHHEIGHT))
-pygame.display.set_caption("Covid-19 Simulator, By: Arjun Sahlot")
+pygame.display.set_caption("Covid-19 Simulator")
 
 # Images
 W, H = 135, 120
