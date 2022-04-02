@@ -21,6 +21,9 @@ import math, os
 import random
 import pygame
 from text_box import TextInput
+import vidmaker
+
+v= vidmaker.Video("/home/arjun/Downloads/covid.mp4")
 
 pygame.init()
 
@@ -420,8 +423,10 @@ def main(win, width, height):
         win.blit(pop_text.get_surface(), (pop_box[0] + pop_box[3] - pop_text.get_surface().get_width()//2, pop_box[1] + pop_box[3]//2 - pop_text.get_surface().get_height()//2))
 
         pygame.display.update()
+        v.update(pygame.surfarray.pixels3d(win).swapaxes(0, 1))
 
 if __name__ == "__main__":
     main(WINDOW, WIDTH, HEIGHT)
 else:
     print("This is not a module that you can use. Sorry.")
+v.export(True)
